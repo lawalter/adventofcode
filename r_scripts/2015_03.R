@@ -50,7 +50,35 @@ directions %>%
   filter(!is.na(coords)) %>% 
   distinct() %>% 
   nrow()
-  
+
+# side project: plot ------------------------------------------------------
+
+library(gganimate)
+#2ca02c cooked asparagus green
+#d62728 brick red
+
+directions %>% 
+  ggplot(aes(x = delta_x, y = delta_y)) +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  geom_point(color = "#d62728") +
+  labs(y = NULL, x = NULL) +
+  theme_classic()
+
+santa_track <- 
+  directions %>% 
+  mutate(movement = row_number()) %>% 
+  select(movement, delta_x, delta_y) %>% 
+  ggplot(aes(x = delta_x, y = delta_y)) +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  geom_point(color = "#d62728", alpha = 0.2) +
+  labs(y = NULL, x = NULL) +
+  theme_classic() +
+  transition_manual(frames = movement, cumulative = TRUE)
+
+animate(santa_track, end_pause = 30)
+
 # part 2 ------------------------------------------------------------------
 
 # Robo-Santa is helping. Every other character is Robo-Santa's move. 
@@ -100,3 +128,34 @@ robo_directions %>%
   distinct() %>% 
   nrow()
 
+# side project: second plot -----------------------------------------------
+
+robo_directions %>% 
+  filter(!is.na(gifter)) %>% 
+  arrange(gifter) %>% 
+  mutate(movement = rep(1:4096, times = 2)) %>% 
+  select(movement, gifter, delta_x, delta_y) %>% 
+  ggplot(aes(x = delta_x, y = delta_y, color = gifter)) +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  geom_point(alpha = 0.2) +
+  labs(y = NULL, x = NULL) +
+  scale_color_manual(values = c("#2ca02c", "#d62728")) +
+  theme_classic()
+
+robosanta_track <- 
+  robo_directions %>% 
+  filter(!is.na(gifter)) %>% 
+  arrange(gifter) %>% 
+  mutate(movement = rep(1:4096, times = 2)) %>% 
+  select(movement, gifter, delta_x, delta_y) %>% 
+  ggplot(aes(x = delta_x, y = delta_y, color = gifter)) +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  geom_point(alpha = 0.2) +
+  labs(y = NULL, x = NULL) +
+  scale_color_manual(values = c("#2ca02c", "#d62728")) +
+  theme_classic() +
+  transition_manual(frames = movement, cumulative = TRUE)
+
+animate(santa_track, end_pause = 30)
